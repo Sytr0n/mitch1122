@@ -1,0 +1,497 @@
+--SytronRemake
+
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/GreenDeno/Venyx-UI-Library/main/source.lua"))()
+local venyx = library.new("Sytron", 5013109572)
+
+--Player Scripts
+
+local page = venyx:addPage("Player", 5012544693)
+local section1 = page:addSection("Player Scripts")
+section1:addButton("Fly x", function()
+	print("Clicked")
+    game.StarterGui:SetCore("SendNotification", {
+        Title = "Sytron";
+        Text = "Fly enabled press x to enable and disable."
+    })
+    local plr = game.Players.LocalPlayer
+	local mouse = plr:GetMouse()
+
+	localplayer = plr
+
+	if workspace:FindFirstChild("Core") then
+		workspace.Core:Destroy()
+	end
+
+	local Core = Instance.new("Part")
+	Core.Name = "Core"
+	Core.Size = Vector3.new(0.05, 0.05, 0.05)
+
+	spawn(function()
+		Core.Parent = workspace
+		local Weld = Instance.new("Weld", Core)
+		Weld.Part0 = Core
+		Weld.Part1 = localplayer.Character.LowerTorso
+		Weld.C0 = CFrame.new(0, 0, 0)
+	end)
+
+	workspace:WaitForChild("Core")
+
+	local torso = workspace.Core
+	flying = true
+	local speed=10
+	local keys={a=false,d=false,w=false,s=false} 
+	local e1
+	local e2
+	local function start()
+		local pos = Instance.new("BodyPosition",torso)
+		local gyro = Instance.new("BodyGyro",torso)
+		pos.Name="EPIXPOS"
+		pos.maxForce = Vector3.new(math.huge, math.huge, math.huge)
+		pos.position = torso.Position
+		gyro.maxTorque = Vector3.new(9e9, 9e9, 9e9) 
+		gyro.cframe = torso.CFrame
+		repeat
+			wait()
+			localplayer.Character.Humanoid.PlatformStand=true
+			local new=gyro.cframe - gyro.cframe.p + pos.position
+			if not keys.w and not keys.s and not keys.a and not keys.d then
+				speed=5
+			end
+			if keys.w then 
+				new = new + workspace.CurrentCamera.CoordinateFrame.lookVector * speed
+				speed=speed+0
+			end
+			if keys.s then 
+				new = new - workspace.CurrentCamera.CoordinateFrame.lookVector * speed
+				speed=speed+0
+			end
+			if keys.d then 
+				new = new * CFrame.new(speed,0,0)
+				speed=speed+0
+			end
+			if keys.a then 
+				new = new * CFrame.new(-speed,0,0)
+				speed=speed+0
+			end
+			if speed>10 then
+				speed=5
+			end
+			pos.position=new.p
+			if keys.w then
+				gyro.cframe = workspace.CurrentCamera.CoordinateFrame*CFrame.Angles(-math.rad(speed*0),0,0)
+			elseif keys.s then
+				gyro.cframe = workspace.CurrentCamera.CoordinateFrame*CFrame.Angles(math.rad(speed*0),0,0)
+			else
+				gyro.cframe = workspace.CurrentCamera.CoordinateFrame
+			end
+		until flying == false
+		if gyro then gyro:Destroy() end
+		if pos then pos:Destroy() end
+		flying=false
+		localplayer.Character.Humanoid.PlatformStand=false
+		speed=10
+	end
+	e1=mouse.KeyDown:connect(function(key)
+		if not torso or not torso.Parent then flying=false e1:disconnect() e2:disconnect() return end
+		if key=="w" then
+			keys.w=true
+		elseif key=="s" then
+			keys.s=true
+		elseif key=="a" then
+			keys.a=true
+		elseif key=="d" then
+			keys.d=true
+		elseif key=="x" then
+			if flying==true then
+				flying=false
+			else
+				flying=true
+				start()
+			end
+		end
+	end)
+	e2=mouse.KeyUp:connect(function(key)
+		if key=="w" then
+			keys.w=false
+		elseif key=="s" then
+			keys.s=false
+		elseif key=="a" then
+			keys.a=false
+		elseif key=="d" then
+			keys.d=false
+		end
+	end)
+	start()
+end)
+section1:addButton("Walkspeed (Z)", function()
+	print("Clicked")
+    game.StarterGui:SetCore("SendNotification", {
+        Title = "Sytron";
+        Text = "WalkSpeed enabled (Z)."
+    })
+	superhuman = false
+	plr = game.Players.LocalPlayer
+	mouse = plr:GetMouse()
+	mouse.KeyDown:connect(function(key)
+		if key == "z" and superhuman == false then
+			superhuman = true
+			game.Players.LocalPlayer.Character.Humanoid.Name = "Humz"
+			game.Players.LocalPlayer.Character.Humz.WalkSpeed = 100
+			game.Players.LocalPlayer.Character.Humz.JumpPower = 200
+		elseif key == "z" and superhuman == true then
+			superhuman = false
+			game.Players.LocalPlayer.Character.Humz.WalkSpeed = 16
+			game.Players.LocalPlayer.Character.Humz.JumpPower = 50
+			game.Players.LocalPlayer.Character.Humz.Name = "Humanoid"
+		end
+	end)
+end)
+section1:addButton("Noclip (k)", function()
+	print("Clicked")
+game.StarterGui:SetCore("SendNotification", {
+        Title = "Sytron";
+        Text = "Noclip enabled K to enable and disable."
+    })
+noclip = false
+	game:GetService("RunService").Stepped:connect(function()
+		if noclip then
+			game.Players.LocalPlayer.Character.Humanoid:ChangeState(11)
+		end
+	end)
+	plr = game.Players.LocalPlayer
+	mouse = plr:GetMouse()
+	mouse.KeyDown:connect(function(key)
+		if key == "k" then
+			noclip = not noclip
+			game.Players.LocalPlayer.Character.Humanoid:ChangeState(11)
+		end
+	end)
+end)
+section1:addButton("Naked", function()
+	print("Clicked")
+game.StarterGui:SetCore("SendNotification", {
+        Title = "Sytron";
+        Text = "Removing your clothes ;)."
+    })
+local function inTable(What, Table)
+		for Index, Value in pairs(Table) do
+			if What == Value then
+				return true
+			end
+		end
+		return false
+	end
+
+	local removingClasses = {
+		"Accessory",
+		"Pants",
+		"Shirt",
+	}
+
+	for _, Instance in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+		if inTable(Instance.ClassName, removingClasses) or Instance.Name == "face" then
+			Instance:Destroy()
+		end
+	end
+end)
+section1:addButton("Auto Stomp (C)", function()
+	print("Clicked")
+game.StarterGui:SetCore("SendNotification", {
+        Title = "Sytron";
+        Text = "AutoStomp enabled C to disable and enable."
+    })
+autostomp = false
+	game:GetService("RunService").Stepped:connect(function()
+		if autostomp then
+			game.ReplicatedStorage.MainEvent:FireServer("Stomp")
+		end
+	end)
+	plr = game.Players.LocalPlayer
+	mouse = plr:GetMouse()
+	mouse.KeyDown:connect(function(key)
+		if key == "c" then
+			autostomp = not autostomp
+			game.ReplicatedStorage.MainEvent:FireServer("Stomp")
+		end
+	end)
+end)
+section1:addButton("AutoBlock", function()
+	print("Clicked")
+    game.StarterGui:SetCore("SendNotification", {
+        Title = "Sytron";
+        Text = "AutoBlock enabled."
+    })
+    while wait() do
+		game.ReplicatedStorage.MainEvent:FireServer("Block", true)
+	end
+end)
+section1:addButton("Rejoin", function()
+	print("Clicked")
+    game.StarterGui:SetCore("SendNotification", {
+        Title = "Sytron";
+        Text = "Rejoining in 5 seconds."
+    })
+    if (#game:GetService("Players"):GetPlayers() <= 1) then
+		game:GetService("TeleportService"):Teleport(game.PlaceId, game:GetService("Players").LocalPlayer)
+	else
+		game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, game:GetService("Players").LocalPlayer)
+	end
+end)
+section1:addButton("AntiBag", function()
+	print("Clicked")
+    game.StarterGui:SetCore("SendNotification", {
+        Title = "Sytron";
+        Text = "AntiBag Enabled."
+    })
+    while wait() do
+		pcall(function()
+			game:GetService("Players").LocalPlayer.Character:FindFirstChild("Christmas_Sock"):Destroy()
+		end)
+	end
+end)
+section1:addButton("Anonymouse", function()
+	print("Clicked")
+game.StarterGui:SetCore("SendNotification", {
+        Title = "Sytron";
+        Text = "Anonymouse mode enabled."
+    })
+    pcall(function()
+		game.Players.LocalPlayer.Character.Shirt:Destroy()
+		game.Players.LocalPlayer.Character.RightUpperLeg:Destroy()
+		game.Players.LocalPlayer.Character.Humanoid.HealthDisplayDistance = math.huge
+		game.Players.LocalPlayer.Character.Humanoid.NameDisplayDistance = math.huge
+		game.Players.LocalPlayer.Character.RightUpperLeg.Size = Vector3.new(0,0,0)
+		game.Players.LocalPlayer.Character.RightUpperLeg.Massless = true
+		game.Players.LocalPlayer.Character.RightUpperLeg.CanCollide = false
+
+		heazd = true
+
+		while heazd == true do 
+			pcall(function()  
+				game.Players.LocalPlayer.Character.RightUpperLeg.RightHipRigAttachment.CFrame =  CFrame.new(0, 100000.4736328125, 0)
+				game.Players.LocalPlayer.Character.RightUpperLeg.CFrame = CFrame.new(0, 100000.4736328125, 0)
+			end)
+			wait()
+		end
+	end)
+	wait(0.10)
+	pcall(function()
+		game.Players.LocalPlayer.Character.LeftUpperLeg:Destroy()
+		game.Players.LocalPlayer.Character.Pants:Destroy()
+		game.Players.LocalPlayer.Character.Humanoid.HealthDisplayDistance = math.huge
+		game.Players.LocalPlayer.Character.Humanoid.NameDisplayDistance = math.huge
+		game.Players.LocalPlayer.Character.LeftUpperLeg.Size = Vector3.new(0,0,0)
+		game.Players.LocalPlayer.Character.LeftUpperLeg.Massless = true
+		game.Players.LocalPlayer.Character.LeftUpperLeg.CanCollide = false
+
+		heazd = true
+
+		while heazd == true do 
+			pcall(function()  
+				game.Players.LocalPlayer.Character.LeftUpperLeg.LeftHipRigAttachment.CFrame =  CFrame.new(0, 100000.4736328125, 0)
+				game.Players.LocalPlayer.Character.LeftUpperLeg.CFrame = CFrame.new(0, 100000.4736328125, 0)
+			end)
+			wait()
+		end
+	end)
+	wait(0.10)
+	pcall(function()
+		game.Players.LocalPlayer.Character.Head.Neck:Destroy()
+		game.Players.LocalPlayer.Character.UpperTorso.NeckAttachment:Destroy()
+		game.Players.LocalPlayer.Character.Humanoid.HealthDisplayDistance = math.huge
+		game.Players.LocalPlayer.Character.Humanoid.NameDisplayDistance = math.huge
+		game.Players.LocalPlayer.Character.Head.Size = Vector3.new(0,0,0)
+		game.Players.LocalPlayer.Character.Head.Massless = true
+		game.Players.LocalPlayer.Character.Head.CanCollide = false
+
+		heazd = true
+
+		while heazd == true do 
+			pcall(function()  
+				game.Players.LocalPlayer.Character.Head.NeckRigAttachment.CFrame =  CFrame.new(0, 100000.4736328125, 0)
+				game.Players.LocalPlayer.Character.UpperTorso.NeckRigAttachment.CFrame =  CFrame.new(0, 100000.4736328125, 0)
+				game.Players.LocalPlayer.Character.Head.CFrame = CFrame.new(0, 100000.4736328125, 0)
+			end)
+			wait()
+		end
+	end)
+end)
+section1:addButton("AntiGrab", function()
+	print("Clicked")
+    game.StarterGui:SetCore("SendNotification", {
+        Title = "Sytron";
+        Text = "AntiGrab enabled."
+    })
+    while wait() do
+		pcall(function()
+			local LocalPlayer = game:GetService("Players").LocalPlayer
+			local char = LocalPlayer.Character
+			if game.Players.LocalPlayer.Character["GRABBING_CONSTRAINT"] then
+				game.Players.LocalPlayer.Character["GRABBING_CONSTRAINT"]:Destroy()
+			end
+		end)
+	end
+end)
+section1:addButton("Bike Fly", function()
+	print("Clicked")
+    game.StarterGui:SetCore("SendNotification", {
+        Title = "Sytron";
+        Text = "Bike fly enabled (Bike needed)."
+    })
+local speed = 20
+	local old
+	local Plr = game.Players.LocalPlayer
+	local wheels = {}
+	local control = {q=false,e=false,w=false,a=false,s=false,d=false}
+	local Mouse = Plr:GetMouse()
+
+	Mouse.KeyDown:connect(function(KEY)
+		local key = KEY:lower()
+		if control[key] ~= nil then
+			control[key]=true
+		end
+	end)
+
+	Mouse.KeyUp:connect(function(KEY)
+		local key = KEY:lower()
+		if control[key] ~= nil then
+			control[key]=false
+		end
+	end)
+
+	while game.RunService.Stepped:wait() do
+		local seat = (Plr.Character or Plr.CharacterAdded:wait()):WaitForChild("Humanoid").SeatPart
+		if Plr.PlayerGui:FindFirstChild("MainScreenGui") and Plr.PlayerGui.MainScreenGui:FindFirstChild("Bar") and Plr.PlayerGui.MainScreenGui.Bar:FindFirstChild("Speed") then
+			Plr.PlayerGui.MainScreenGui.Bar.Speed.bar.Size = UDim2.new(speed / 100 * 0.95, 0, 0.83, 0)
+		else
+			local c = Plr.PlayerGui.MainScreenGui.Bar.HP
+			local g = c:Clone()
+			g.Name = "Speed"
+			g.Position = UDim2.new(0.5, 0, 1, -120)
+			g.bar.BackgroundColor3 = Color3.fromRGB(255, 155, 0)
+			g.Picture.Image.Image = "rbxassetid://181035717"
+			g.TextLabel.Text = "Speed"
+			g.Parent = c.Parent
+		end
+		if seat ~= nil and seat:IsDescendantOf(game.Workspace.Vehicles) then
+			if seat ~= old then
+				if old then
+					old.Vel:Destroy()
+					old.Gyro:Destroy()
+				end
+				old = seat
+				for i = 1, 2 do
+					if wheels[i] then
+						wheels[i][2].Parent = wheels[i][1]
+					end
+					local wheel = seat.Parent.Wheel
+					wheels[i] = {seat.Parent, wheel}
+					wheel:remove()
+				end
+				local gyro = Instance.new("BodyGyro", seat)
+				gyro.Name = "Gyro"
+				local pos = Instance.new("BodyVelocity", seat)
+				pos.Name = "Vel"
+				gyro.maxTorque = Vector3.new(9e9, 9e9, 9e9)
+				pos.MaxForce = Vector3.new(9e9, 9e9, 9e9)
+			else 
+				seat.Gyro.cframe = workspace.CurrentCamera.CoordinateFrame
+				local vel = CFrame.new(0, 0, 0)
+				if control.w then
+					vel = vel * CFrame.new(0, 0, -speed)
+				end
+				if control.s then
+					vel = vel * CFrame.new(0, 0, speed)
+				end
+				if control.a then
+					vel = vel * CFrame.new(-speed, 0, 0)
+				end
+				if control.d then
+					vel = vel * CFrame.new(speed, 0, 0)
+				end
+				seat.Vel.Velocity = (seat.CFrame*vel).p - seat.CFrame.p
+			end
+		end
+		if control.e and speed<100 then
+			speed = speed + 1
+		end
+		if control.q and speed > 0 then
+			speed = speed - 1
+		end
+	end
+end)
+section1:addButton("Headless", function()
+	print("Clicked")
+    game.StarterGui:SetCore("SendNotification", {
+        Title = "Sytron";
+        Text = "Headless enabled."
+    })
+    pcall(function()
+		game.Players.LocalPlayer.Character.Head.Neck:Destroy()
+		game.Players.LocalPlayer.Character.UpperTorso.NeckAttachment:Destroy()
+		game.Players.LocalPlayer.Character.Humanoid.HealthDisplayDistance = math.huge
+		game.Players.LocalPlayer.Character.Humanoid.NameDisplayDistance = math.huge
+		game.Players.LocalPlayer.Character.Head.Size = Vector3.new(0, 0, 0)
+		game.Players.LocalPlayer.Character.Head.Massless = true
+		game.Players.LocalPlayer.Character.Head.CanCollide = false
+
+		heazd = true
+
+		while heazd == true do 
+			pcall(function()  
+				game.Players.LocalPlayer.Character.Head.NeckRigAttachment.CFrame = CFrame.new(0, 100000.4736328125, 0)
+				game.Players.LocalPlayer.Character.UpperTorso.NeckRigAttachment.CFrame = CFrame.new(0, 100000.4736328125, 0)
+				game.Players.LocalPlayer.Character.Head.CFrame = CFrame.new(0, 100000.4736328125, 0)
+			end)
+			wait()
+		end
+	end)
+end)
+section1:addButton("Fog removal", function()
+	print("Clicked")
+    game.StarterGui:SetCore("SendNotification", {
+        Title = "Sytron";
+        Text = "Successfuly removed the Fog."
+    })
+    	game:GetService("Lighting").FogEnd = math.huge
+end)
+Player:addButton("Anti Flashbang", function()
+	while wait() do
+		pcall(function()
+			game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("MainScreenGui"):FindFirstChild("whiteScreen"):Destroy()
+		end)
+	end
+end)
+section1:addButton("Unjail", function()
+	print("Clicked")
+    game.StarterGui:SetCore("SendNotification", {
+        Title = "Sytron";
+        Text = "Unjailed Successfuly."
+    })
+if game:GetService("Players").LocalPlayer.DataFolder.Currency.Value >= 125 then
+		game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-270.94, 20.327, -242.38)
+		game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-270.94, 20.327, -242.38)
+		wait()
+		fireclickdetector(game:GetService("Workspace").Ignored.Shop["[Key] - $125"].ClickDetector)
+		wait(.1)
+		fireclickdetector(game:GetService("Workspace").Ignored.Shop["[Key] - $125"].ClickDetector)
+		fireclickdetector(game:GetService("Workspace").Ignored.Shop["[Key] - $125"].ClickDetector)
+		repeat
+			wait()
+		until game:GetService("Players").LocalPlayer.Backpack:FindFirstChild("[Key]")
+		local Hum = game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+		if Hum.Health > 0 then
+			key1 = game:GetService("Players").LocalPlayer.Backpack:FindFirstChild("[Key]")
+			if key1 then
+				Hum:EquipTool(key1)
+				for i, v in pairs(game:GetService"Players".LocalPlayer.Character:GetChildren()) do
+					if v:isA("Tool") then
+						game:GetService("Players").LocalPlayer.Character.Humanoid:EquipTool(key1)
+						game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-485.668, 23.631, -285.169)
+						v:Activate()
+					end
+				end
+			end
+		end
+	end
+end)
